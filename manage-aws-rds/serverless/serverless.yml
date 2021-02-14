@@ -1,0 +1,33 @@
+service: manage-rds
+
+provider:
+  name: aws
+  runtime: go1.x
+  memorySize: 256
+  region: ap-northeast-2
+  stage: <STAGE>>
+  role: <ROLE>>
+  timeout: 30
+  environment:
+    db_clusters: <DB_CLUSTERS>
+
+package:
+ exclude:
+   - ./**
+ include:
+   - ./bin/**
+
+functions:
+  startDBCluster:
+    handler: bin/manage-rds
+    events:
+      - schedule:
+          name: startDBClusterEvent
+          rate: cron(0 21 * * ? *)
+
+  stopDBCluster:
+    handler: bin/manage-rds
+    events:
+      - schedule:
+          name: stopDBClusterEvent
+          rate: cron(0 15 * * ? *)
